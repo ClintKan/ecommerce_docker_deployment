@@ -1,0 +1,28 @@
+# Use an official Python image as base
+FROM python:3.9
+
+#Declare and create the working directory in the container
+WORKDIR /be_app
+
+# Copying the files from the clone repo (in the EC2) to the container
+COPY backend/ .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run Django migrations for the specified apps
+RUN python manage.py makemigrations account
+RUN python manage.py makemigrations payments
+RUN python manage.py makemigrations product
+
+# Expose port of the EC2 not container
+EXPOSE 8000
+
+# Run command when container launches
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# To create the image - first
+# docker build -t <name-to-be-given-to-the-image> .
+
+# Then to create the container that would have the app
+# docker run -d -ti -p 80:8000 --name <name-to-be-given-to-the-container> <name-of-the-img-2b-used>
