@@ -5,7 +5,7 @@ resource "aws_instance" "ecommerce_bastion_az1" {
 
   # Security groups control the inbound and outbound traffic to WebSrv EC2 instance.
   vpc_security_group_ids = [aws_security_group.pub_secgrp.id] #
-  key_name               = "ck_wkld6"                         # The key pair name for the workload
+  key_name               = "Clint-Instance"                         # The key pair name for the workload
   subnet_id              = aws_subnet.pub_subnet_1a.id # associating a subnet to be tied to this EC2
 
   tags = {
@@ -21,7 +21,7 @@ resource "aws_instance" "ecommerce_bastion_az2" {
 
   # Security groups control the inbound and outbound traffic to WebSrv EC2 instance.
   vpc_security_group_ids = [aws_security_group.pub_secgrp.id] #
-  key_name               = "ck_wkld6"                         # The key pair name for the workload
+  key_name               = "Clint-Instance"                         # The key pair name for the workload
   subnet_id              = aws_subnet.pub_subnet_1b.id # associating a subnet to be tied to this EC2
 
   tags = {
@@ -40,7 +40,7 @@ resource "aws_instance" "ecommerce_app_az1" {
 
   # Security groups control the inbound and outbound traffic to WebSrv EC2 instance.
   vpc_security_group_ids = [aws_security_group.priv_secgrp.id] #
-  key_name               = "ck_wkld6"                          # The key pair name for the workload
+  key_name               = "Clint-Instance"                          # The key pair name for the workload
   user_data              = base64encode(templatefile("${path.module}/deploy.sh", {
     rds_endpoint = aws_db_instance.main.endpoint,
     docker_user = var.dockerhub_username,
@@ -66,7 +66,7 @@ resource "aws_instance" "ecommerce_app_az2" {
 
   # Security groups control the inbound and outbound traffic to WebSrv EC2 instance.
   vpc_security_group_ids = [aws_security_group.priv_secgrp.id] #
-  key_name               = "ck_wkld6"                          # The key pair name for the workload
+  key_name               = "Clint-Instance"                          # The key pair name for the workload
   subnet_id              = aws_subnet.priv_subnet_1b.id   # associating a subnet to be tied to this EC2
   user_data              = base64encode(templatefile("${path.module}/deploy.sh", 
   {
