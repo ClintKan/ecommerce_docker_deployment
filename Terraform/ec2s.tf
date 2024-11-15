@@ -41,11 +41,11 @@ resource "aws_instance" "ecommerce_app_az1" {
   # Security groups control the inbound and outbound traffic to WebSrv EC2 instance.
   vpc_security_group_ids = [aws_security_group.priv_secgrp.id] #
   key_name               = "Clint-Instance"                          # The key pair name for the workload
-  user_data              = base64encode(templatefile("${path.module}/deploy.sh", {
+  user_data              = base64encode(templatefile("./deploy.sh", {
     rds_endpoint = aws_db_instance.main.endpoint,
     docker_user = var.dockerhub_username,
     docker_pass = var.dockerhub_password,
-    docker_compose = templatefile("${path.module}/compose.yaml", {
+    docker_compose = templatefile("./compose.yaml", {
       rds_endpoint = aws_db_instance.main.endpoint
     })
   }))
