@@ -55,7 +55,7 @@ resource "aws_instance" "ecommerce_app_az1" {
     "Name" : "ecommerce_app_az1"
   }
 
-  depends_on = [aws_db_instance.main, aws_nat_gateway.main]
+  depends_on = [aws_db_instance.main, aws_nat_gateway.wl6vpc_ngw_1a]
 
 }
 
@@ -83,7 +83,7 @@ resource "aws_instance" "ecommerce_app_az2" {
     "Name" : "ecommerce_app_az2"
   }
 
-  depends_on = [aws_db_instance.main, aws_nat_gateway.main]
+  depends_on = [aws_db_instance.main, aws_nat_gateway.wl6vpc_ngw_1b]
 
 }
 
