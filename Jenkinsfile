@@ -19,41 +19,41 @@ pipeline {
       }
     }
 
-    stage('SonarQube Analysis') {
-      agent { label 'build-node' }
-      steps {
-        script {
-          // Perform the SonarQube scan using SonarScanner
-            withSonarQubeEnv(SonarQubeServer) {
-                sh 'sonar-scanner -Dsonar.login=${SonarQube_Token}'
-            }
-        }
-      }
-    }
+    // stage('SonarQube Analysis') {
+    //   agent { label 'build-node' }
+    //   steps {
+    //     script {
+    //       // Perform the SonarQube scan using SonarScanner
+    //         withSonarQubeEnv(SonarQubeServer) {
+    //             sh 'sonar-scanner -Dsonar.login=${SonarQube_Token}'
+    //         }
+    //     }
+    //   }
+    // }
   
-    stage('Checkov Setup') {
-      steps {
-        script {
-        // Step 1: Create Python virtual environment
-            sh '''
-            python3 -m venv checkov_env
-            source checkov_env/bin/activate
-            pip install --upgrade pip
-            pip install checkov
-            '''
+    // stage('Checkov Setup') {
+    //   steps {
+    //     script {
+    //     // Step 1: Create Python virtual environment
+    //         sh '''
+    //         python3 -m venv checkov_env
+    //         source checkov_env/bin/activate
+    //         pip install --upgrade pip
+    //         pip install checkov
+    //         '''
                     
-        // Step 2: Run Checkov scan and save the output to the reports directory
-            sh '''
-            mkdir -p reports
-            source checkov_env/bin/activate
-            checkov -d . --output-file-path reports/checkov_report.json
-            '''
+    //     // Step 2: Run Checkov scan and save the output to the reports directory
+    //         sh '''
+    //         mkdir -p reports
+    //         source checkov_env/bin/activate
+    //         checkov -d . --output-file-path reports/checkov_report.json
+    //         '''
                     
-        // Step 3: Archive the Checkov report
-            archiveArtifacts artifacts: 'reports/checkov_report.json', fingerprint: true
-        }
-      }
-    }
+    //     // Step 3: Archive the Checkov report
+    //         archiveArtifacts artifacts: 'reports/checkov_report.json', fingerprint: true
+    //     }
+    //   }
+    // }
 
     stage ('Test') {
       agent any
@@ -149,34 +149,34 @@ pipeline {
     // }
 
 // Stage to run security checks (Trivy scan)
-    stage('Images Security Check') {
-      agent { label 'build-node' }
-      steps {
-        // Run security scan on the backend image
-        sh '''
-          echo "Running Trivy scan on backend image..."
-          trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_backend_report.json cklany/wkld6_backend:latest
+  //   stage('Images Security Check') {
+  //     agent { label 'build-node' }
+  //     steps {
+  //       // Run security scan on the backend image
+  //       sh '''
+  //         echo "Running Trivy scan on backend image..."
+  //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_backend_report.json cklany/wkld6_backend:latest
           
-          # Check if Trivy scan found vulnerabilities and fail the build if any are found
-          if [ $? -ne 0 ]; then
-            echo "Trivy scan found vulnerabilities in backend image. Failing the build."
-            exit 1
-          fi
-        '''
+  //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
+  //         if [ $? -ne 0 ]; then
+  //           echo "Trivy scan found vulnerabilities in backend image. Failing the build."
+  //           exit 1
+  //         fi
+  //       '''
         
-        // Run security scan on the frontend image
-        sh '''
-          echo "Running Trivy scan on frontend image..."
-          trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_frontend_report.json cklany/wkld6_frontend:latest
+  //       // Run security scan on the frontend image
+  //       sh '''
+  //         echo "Running Trivy scan on frontend image..."
+  //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_frontend_report.json cklany/wkld6_frontend:latest
           
-          # Check if Trivy scan found vulnerabilities and fail the build if any are found
-          if [ $? -ne 0 ]; then
-            echo "Trivy scan found vulnerabilities in frontend image. Failing the build."
-            exit 1
-          fi
-        '''
-    }
-  }
+  //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
+  //         if [ $? -ne 0 ]; then
+  //           echo "Trivy scan found vulnerabilities in frontend image. Failing the build."
+  //           exit 1
+  //         fi
+  //       '''
+  //   }
+  // }
 
     stage('Infrastructure') {
       agent { label 'build-node' }

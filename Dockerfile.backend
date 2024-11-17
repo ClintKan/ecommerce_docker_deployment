@@ -5,7 +5,7 @@ FROM python:3.9
 WORKDIR /be_app
 
 # Copying the files from the clone repo (in the EC2) to the container
-COPY backend/ .
+COPY backend/ /be_app/
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
@@ -19,7 +19,7 @@ RUN python manage.py makemigrations product
 EXPOSE 8000
 
 # Run command when container launches
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000", ]
 
 # To create the image - first
 # docker build -t <name-to-be-given-to-the-image> .
