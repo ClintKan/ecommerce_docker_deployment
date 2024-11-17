@@ -20,6 +20,7 @@ pipeline {
     }
 
     stage('SonarQube Analysis') {
+      agent { label 'build-node' }
       steps {
         script {
           // Perform the SonarQube scan using SonarScanner
