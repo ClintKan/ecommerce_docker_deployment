@@ -19,7 +19,7 @@ RUN python manage.py makemigrations product
 EXPOSE 8000
 
 # Run command when container launches
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000", ]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 # To create the image - first
 # docker build -t <name-to-be-given-to-the-image> .

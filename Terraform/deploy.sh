@@ -36,11 +36,11 @@ docker-compose --version
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Docker and Docker Compose installed."
 
-# Step 2: Log into DockerHub (Assuming credentials are passed via environment variables)
+# Log into DockerHub (Assuming credentials are passed via environment variables)
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Logging into DockerHub..."
 echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USERNAME" --password-stdin
 
-# Step 3: Create docker-compose.yml
+# Create docker-compose.yml
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating app directory..."
 mkdir -p /app
@@ -50,7 +50,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating docker-compose.yml..."
 
 # Creating the docker-compose.yml file
 cat > docker-compose.yml <<EOF
-${docker_compose}
+${compose}
 EOF
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] docker-compose.yml started."
