@@ -1,4 +1,4 @@
-# Creating of the EC2 Instance for the web server in AZ - us-east-1a, in the pub subnet
+# Creating of the EC2 Instance for the bastion host in AZ - us-east-1a, in the pub subnet
 resource "aws_instance" "ecommerce_bastion_az1" {
   ami           = "ami-0ea3c35c5c3284d82" # AMI ID of Ubuntu Server 24.04 LTS (HVM), SSD Volume Type
   instance_type = var.instance_type       # Specify the desired EC2 instance size.
@@ -14,7 +14,7 @@ resource "aws_instance" "ecommerce_bastion_az1" {
 
 }
 
-# Creating of the EC2 Instance for the web server in AZ - us-east-1b, in the pub subnet
+# Creating of the EC2 Instance for the bastion host in AZ - us-east-1b, in the pub subnet
 resource "aws_instance" "ecommerce_bastion_az2" {
   ami           = "ami-0ea3c35c5c3284d82" # AMI ID of Ubuntu Server 24.04 LTS (HVM), SSD Volume Type
   instance_type = var.instance_type       # Specify the desired EC2 instance size.
