@@ -10,20 +10,20 @@ resource "aws_vpc" "wl6vpc" {
 }
 
 #Creating the elastic IP in AZ 1a
-resource "aws_eip" "elastic_ip_1a" {
+resource "aws_eip" "elastic_ip_2a" {
   #instance = aws_nat_gateway.wl6vpc_ngw_1a.id
   domain = "vpc"
   tags = {
-    "Name" : "wl6vpc_eip_1a"
+    "Name" : "wl6vpc_eip_2a"
   }
 }
 
 #Creating the elastic IP in AZ 1b
-resource "aws_eip" "elastic_ip_1b" {
+resource "aws_eip" "elastic_ip_2b" {
   #instance = aws_nat_gateway.wl6vpc_ngw_1b.id
   domain = "vpc"
   tags = {
-    "Name" : "wl6vpc_eip_1b"
+    "Name" : "wl6vpc_eip_2b"
   }
 }
 
@@ -51,7 +51,7 @@ resource "aws_lb" "wl6-lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.wl6_lb_sg.id]
-  subnets            = [aws_subnet.pub_subnet_1a.id, aws_subnet.pub_subnet_1b.id]
+  subnets            = [aws_subnet.pub_subnet_2a.id, aws_subnet.pub_subnet_2b.id]
 }
 
 resource "aws_lb_target_group" "wl6_lb_tg" {

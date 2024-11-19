@@ -1,23 +1,23 @@
 # Displaying the public IP address of the Bastion EC2 in AZ-1a instance after creation.
 output "instance_ip_1" {
-  value = aws_instance.ecommerce_app_az1
+  value = aws_instance.ecommerce_app_az1.id
 }
 
 # Displaying the public IP address of the Bastion EC2 in AZ-1b instance after creation.
 output "instance_ip_1b" {
-  value = aws_instance.ecommerce_app_az2
+  value = aws_instance.ecommerce_app_az2.id
 
 }
 
 # Output the public IP address of the NAT Gateway's Elastic IP
 output "nat_gateway_ip" {
-  value = aws_nat_gateway.wl6vpc_ngw_1a.id
+  value = aws_nat_gateway.wl6vpc_ngw_2a.id
 
 }
 
 # Output the public IP address of the NAT Gateway's Elastic IP in AZ 1b
 output "nat_gateway_ip_1b" {
-  value = aws_nat_gateway.wl6vpc_ngw_1b.id
+  value = aws_nat_gateway.wl6vpc_ngw_2b.id
 
 }
 

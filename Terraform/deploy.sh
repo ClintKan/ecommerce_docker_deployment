@@ -50,7 +50,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating docker-compose.yml..."
 
 # Creating the docker-compose.yml file
 cat > docker-compose.yml <<EOF
-${compose}
+${docker_compose}
 EOF
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] docker-compose.yml started."

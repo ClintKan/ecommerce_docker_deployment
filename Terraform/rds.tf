@@ -18,4 +18,3 @@ resource "aws_db_instance" "main" {
     Name = "Ecommerce Postgres DB"
   }
 }
-
