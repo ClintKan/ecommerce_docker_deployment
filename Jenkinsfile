@@ -35,9 +35,6 @@ pipeline {
         sh '''
           echo "Performing in-pipeline cleanup after Test..."
           docker system prune -f
-          
-          # Safer git clean that preserves terraform state
-          git clean -ffdx -e "*.tfstate*" -e ".terraform/*"
         '''
       }
     }
@@ -47,6 +44,7 @@ pipeline {
       steps {
         sh 'echo ${DOCKER_CREDS_PSW} | docker login -u ${DOCKER_CREDS_USR} --password-stdin'
         
+        // Build and push backend
         sh '''
         echo "Building the backend image..."
         docker build -t cklany/wkld6_backend:latest -f Dockerfile.backend .
