@@ -71,7 +71,9 @@ pipeline {
         withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'aws_access_key'), 
                         string(credentialsId: 'AWS_SECRET_KEY', variable: 'aws_secret_key'),
                         string(credentialsId: 'DB_USERNAME', variable: 'db_username'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password')]) {
+                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password')
+                        string(credentialsId: 'DOCKER_CREDS_USR', variable: 'dockerhub_username'),
+                        string(credentialsId: 'DOCKER_CREDS_PSW', variable: 'dockerhub_password')]) {
           dir('Terraform') {
             sh '''
               terraform init
@@ -84,7 +86,7 @@ pipeline {
               terraform apply -auto-approve \
                 -var="dockerhub_username=${DOCKER_CREDS_USR}" \
                 -var="dockerhub_password=${DOCKER_CREDS_PSW}" \
-                -var="aws_access_key=${AWS_ACCESS_KEY_ID}" \
+                -var="aws_access_key=${AWS_ACCESS_KEY}" \
                 -var="aws_secret_key=${AWS_SECRET_ACCESS_KEY}"
             '''
           }
