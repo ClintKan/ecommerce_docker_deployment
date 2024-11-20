@@ -24,7 +24,6 @@ pipeline {
       steps {
         sh '''#!/bin/bash
         source venv/bin/activate
-        pip install -r ./backend/requirements.txt
         pip install pytest-django
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
         ''' 
