@@ -65,13 +65,13 @@ pipeline {
     stage('Infrastructure') {
       agent { label 'build-node' }
       steps {
-        dir('Terraform') {
-          sh '''
-            terraform init
-            terraform apply -auto-approve \
-              -var="dockerhub_username=${DOCKER_CREDS_USR}" \
-              -var="dockerhub_password=${DOCKER_CREDS_PSW}"
-          '''
+          dir('Terraform') {
+            sh '''
+              terraform init
+              terraform apply -auto-approve \
+                -var="dockerhub_username=${DOCKER_CREDS_USR}" \
+                -var="dockerhub_password=${DOCKER_CREDS_PSW}" \
+            '''
           }
         }
       }
@@ -89,5 +89,6 @@ pipeline {
     }
   }
 }
+
 
 
