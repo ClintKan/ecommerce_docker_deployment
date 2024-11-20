@@ -71,7 +71,7 @@ pipeline {
         withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'aws_access_key'), 
                         string(credentialsId: 'AWS_SECRET_KEY', variable: 'aws_secret_key'),
                         string(credentialsId: 'DB_USERNAME', variable: 'db_username'),
-                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password')
+                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password'),
                         string(credentialsId: 'DOCKER_CREDS_USR', variable: 'dockerhub_username'),
                         string(credentialsId: 'DOCKER_CREDS_PSW', variable: 'dockerhub_password')]) {
           dir('Terraform') {
