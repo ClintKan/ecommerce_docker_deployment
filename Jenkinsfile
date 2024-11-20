@@ -1,9 +1,9 @@
 pipeline {
   agent any
 
-  // environment {
-  //   //DOCKER_CREDS = credentials('docker-hub-credentials')
-  // }
+ environment {
+  DOCKER_CREDS = credentials('docker-hub-credentials')
+  }
 
   stages {
     stage('Build') {
@@ -42,7 +42,7 @@ pipeline {
     stage('Build & Push Images') {
       agent { label 'build-node' }
       steps {
-        sh 'echo ${DOCKER_CREDS_PSW} | docker login -u ${DOCKER_CREDS_USR} --password-stdin'
+        sh '''echo ${DOCKER_CREDS_PSW} | docker login -u ${DOCKER_CREDS_USR} --password-stdin'''
         
         // Build and push backend
         sh '''
