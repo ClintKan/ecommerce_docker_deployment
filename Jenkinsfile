@@ -1,8 +1,8 @@
 pipeline {
   agent any
 
- environment {
-  DOCKER_CREDS = credentials('docker-hub-credentials')
+  environment {
+    DOCKER_CREDS = credentials('docker-hub-credentials')
   }
 
   stages {
@@ -32,9 +32,12 @@ pipeline {
     stage('Cleanup') {
       agent { label 'build-node' }
       steps {
-        sh '''#!/bin/bash
-        echo "Only clean Docker system"
-        docker system prune -f
+        sh '''
+          echo "Performing in-pipeline cleanup after Test..."
+          docker system prune -f
+          
+          # Safer git clean that preserves terraform state
+          git clean -ffdx -e "*.tfstate*" -e ".terraform/*"
         '''
       }
     }
@@ -42,9 +45,8 @@ pipeline {
     stage('Build & Push Images') {
       agent { label 'build-node' }
       steps {
-        sh '''echo ${DOCKER_CREDS_PSW} | docker login -u ${DOCKER_CREDS_USR} --password-stdin'''
+        sh 'echo ${DOCKER_CREDS_PSW} | docker login -u ${DOCKER_CREDS_USR} --password-stdin'
         
-        // Build and push backend
         sh '''
         echo "Building the backend image..."
         docker build -t cklany/wkld6_backend:latest -f Dockerfile.backend .
@@ -65,30 +67,27 @@ pipeline {
     stage('Infrastructure') {
       agent { label 'build-node' }
       steps {
-          dir('Terraform') {
-            sh '''
-              terraform init
-              terraform apply -auto-approve \
-                -var="dockerhub_username=${DOCKER_CREDS_USR}" \
-                -var="dockerhub_password=${DOCKER_CREDS_PSW}" \
-            '''
-          }
-        }
-      }
-
-
-  post {
-    always {
-      node('build-node') {
+        dir('Terraform') {
           sh '''
-            docker logout
-            docker system prune -f
+            terraform init
+            terraform apply -auto-approve \
+              -var="dockerhub_username=${DOCKER_CREDS_USR}" \
+              -var="dockerhub_password=${DOCKER_CREDS_PSW}"
           '''
         }
       }
     }
+
+    // Finalize Stage (Replaces post block)
+    stage('Finalize') {
+      agent { label 'build-node' }
+      steps {
+        sh '''
+          echo "Performing final cleanup tasks..."
+          docker logout
+          docker system prune -f
+        '''
+      }
+    }
   }
 }
-
-
-
