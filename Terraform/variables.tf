@@ -28,14 +28,14 @@ variable "db_username" {
   description = "Username for the master DB user"
   type        = string
   sensitive   = true
-  default     = "userdb"
+  default     = ""
 }
 
 variable "db_password" {
   description = "Password for the master DB user"
   type        = string
   sensitive   = true
-  default     = "abcd1234"
+  default     = ""
 }
 
 variable "dockerhub_username" {

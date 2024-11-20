@@ -7,7 +7,7 @@ pipeline {
   }
 
   stages {
-    stage ('Build') {
+    stage('Build') {
       agent any
       steps {
         sh '''#!/bin/bash
@@ -55,7 +55,7 @@ pipeline {
     //   }
     // }
 
-    stage ('Test') {
+    stage('Test') {
       agent any
       steps {
         sh '''#!/bin/bash
@@ -146,70 +146,74 @@ pipeline {
     //   }
     // }
 
-// Stage to run security checks (Trivy scan)
-  //   stage('Images Security Check') {
-  //     agent { label 'build-node' }
-  //     steps {
-  //       // Run security scan on the backend image
-  //       sh '''
-  //         echo "Running Trivy scan on backend image..."
-  //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_backend_report.json cklany/wkld6_backend:latest
+    // Stage to run security checks (Trivy scan)
+    //   stage('Images Security Check') {
+    //     agent { label 'build-node' }
+    //     steps {
+    //       // Run security scan on the backend image
+    //       sh '''
+    //         echo "Running Trivy scan on backend image..."
+    //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_backend_report.json cklany/wkld6_backend:latest
           
-  //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
-  //         if [ $? -ne 0 ]; then
-  //           echo "Trivy scan found vulnerabilities in backend image. Failing the build."
-  //           exit 1
-  //         fi
-  //       '''
+    //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
+    //         if [ $? -ne 0 ]; then
+    //           echo "Trivy scan found vulnerabilities in backend image. Failing the build."
+    //           exit 1
+    //         fi
+    //       '''
         
-  //       // Run security scan on the frontend image
-  //       sh '''
-  //         echo "Running Trivy scan on frontend image..."
-  //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_frontend_report.json cklany/wkld6_frontend:latest
+    //       // Run security scan on the frontend image
+    //       sh '''
+    //         echo "Running Trivy scan on frontend image..."
+    //         trivy image --format json --output /var/lib/jenkins/workspace/workload_6_main/reports/trivy_frontend_report.json cklany/wkld6_frontend:latest
           
-  //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
-  //         if [ $? -ne 0 ]; then
-  //           echo "Trivy scan found vulnerabilities in frontend image. Failing the build."
-  //           exit 1
-  //         fi
-  //       '''
-  //   }
-  // }
+    //         # Check if Trivy scan found vulnerabilities and fail the build if any are found
+    //         if [ $? -ne 0 ]; then
+    //           echo "Trivy scan found vulnerabilities in frontend image. Failing the build."
+    //           exit 1
+    //         fi
+    //       '''
+    //   }
+    // }
 
     stage('Infrastructure') {
       agent { label 'build-node' }
       steps {
         // Securely inject AWS credentials from Jenkins' credentials store
-        withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'AWS_ACCESS_KEY_ID'),
-                      string(credentialsId: 'AWS_SECRET_KEY', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                          dir('Terraform') {
-                            sh '''
-                              terraform init
-                              terraform plan -no-color -out plan.tfplan \
-                              -var="db_username=${db_username}" \
-                              -var="db_password=${db_password}" \
-                              -var="aws_access_key=${aws_access_key}" \
-                              -var="aws_secret_key=${aws_secret_key}"
+        withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'aws_access_key'), 
+                        string(credentialsId: 'AWS_SECRET_KEY', variable: 'aws_secret_key'),
+                        string(credentialsId: 'DB_USERNAME', variable: 'db_username'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password')]) {
+          dir('Terraform') {
+            sh '''
+              terraform init
+              terraform plan -no-color -out plan.tfplan \
+              -var="db_username=${db_username}" \
+              -var="db_password=${db_password}" \
+              -var="aws_access_key=${aws_access_key}" \
+              -var="aws_secret_key=${aws_secret_key}"
 
-                              terraform apply -auto-approve \
-                                -var="dockerhub_username=${DOCKER_CREDS_USR}" \
-                                -var="dockerhub_password=${DOCKER_CREDS_PSW}" \
-                                -var="aws_access_key=${AWS_ACCESS_KEY_ID}" \
-                                -var="aws_secret_key=${AWS_SECRET_ACCESS_KEY}"
-                            '''
-                            }
+              terraform apply -auto-approve \
+                -var="dockerhub_username=${DOCKER_CREDS_USR}" \
+                -var="dockerhub_password=${DOCKER_CREDS_PSW}" \
+                -var="aws_access_key=${AWS_ACCESS_KEY_ID}" \
+                -var="aws_secret_key=${AWS_SECRET_ACCESS_KEY}"
+            '''
+          }
         }
       }
     }
+  }
 
   post {
     always {
-      node('build-node') }
-      steps {
-        sh '''
-          docker logout
-          docker system prune -f
-        '''
+      node('build-node') {
+        steps {
+          sh '''
+            docker logout
+            docker system prune -f
+          '''
+        }
       }
     }
   }

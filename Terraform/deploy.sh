@@ -13,11 +13,10 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Installing Node Exporter..."
 sudo apt install wget -y
 
 # Downloading and installing Node Exporter
-NODE_EXPORTER_VERSION="1.5.0"
-wget https://github.com/prometheus/node_exporter/releases/download/v${NODE_EXPORTER_VERSION}/node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz
-tar xvfz node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64.tar.gz
-sudo mv node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64/node_exporter /usr/local/bin/
-rm -rf node_exporter-${NODE_EXPORTER_VERSION}.linux-amd64*
+wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+tar xvfz node_exporter-1.5.0.linux-amd64.tar.gz
+sudo mv node_exporter-1.5.0.linux-amd64/node_exporter /usr/local/bin/
+rm -rf node_exporter-1.5.0.linux-amd64*
 
 # Create a Node Exporter user
 sudo useradd --no-create-home --shell /bin/false node_exporter

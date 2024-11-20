@@ -10,20 +10,20 @@ resource "aws_vpc" "wl6vpc" {
 }
 
 #Creating the elastic IP in AZ 1a
-resource "aws_eip" "elastic_ip_2a" {
+resource "aws_eip" "elastic_ip_1a" {
   #instance = aws_nat_gateway.wl6vpc_ngw_1a.id
   domain = "vpc"
   tags = {
-    "Name" : "wl6vpc_eip_2a"
+    "Name" : "wl6vpc_eip_1a"
   }
 }
 
 #Creating the elastic IP in AZ 1b
-resource "aws_eip" "elastic_ip_2b" {
+resource "aws_eip" "elastic_ip_1b" {
   #instance = aws_nat_gateway.wl6vpc_ngw_1b.id
   domain = "vpc"
   tags = {
-    "Name" : "wl6vpc_eip_2b"
+    "Name" : "wl6vpc_eip_1b"
   }
 }
 
@@ -32,7 +32,7 @@ resource "aws_eip" "elastic_ip_2b" {
 resource "aws_vpc_peering_connection" "Peering_wl6_default" {
   # peer_owner_id = var.peer_owner_id
   peer_vpc_id = aws_vpc.wl6vpc.id       #ID of the target VPC
-  vpc_id      = "vpc-0a3b43fb889f55528" #ID of the VPC requesting
+  vpc_id      = "vpc-00e24473ea1c808e5" #ID of the VPC requesting
 
   auto_accept = true
 
@@ -51,7 +51,7 @@ resource "aws_lb" "wl6-lb" {
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.wl6_lb_sg.id]
-  subnets            = [aws_subnet.pub_subnet_2a.id, aws_subnet.pub_subnet_2b.id]
+  subnets            = [aws_subnet.pub_subnet_1a.id, aws_subnet.pub_subnet_1b.id]
 }
 
 resource "aws_lb_target_group" "wl6_lb_tg" {
