@@ -1,9 +1,9 @@
 pipeline {
   agent any
 
-  environment {
-    //DOCKER_CREDS = credentials('docker-hub-credentials')
-  }
+  // environment {
+  //   //DOCKER_CREDS = credentials('docker-hub-credentials')
+  // }
 
   stages {
     stage('Build') {
