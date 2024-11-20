@@ -24,8 +24,6 @@ pipeline {
         sh '''#!/bin/bash
         source venv/bin/activate
         pip install pytest-django
-        python backend/manage.py makemigrations
-        python backend/manage.py migrate
         pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
         '''
       }
@@ -34,9 +32,9 @@ pipeline {
     stage('Cleanup') {
       agent { label 'build-node' }
       steps {
-        sh '''
-          echo "Only clean Docker system"
-          docker system prune -f
+        sh '''#!/bin/bash
+        echo "Only clean Docker system"
+        docker system prune -f
         '''
       }
     }
@@ -48,18 +46,18 @@ pipeline {
         
         // Build and push backend
         sh '''
-          echo "Building the backend image..."
-          docker build -t cklany/wkld6_backend:latest -f Dockerfile.backend .
-          echo "Pushing backend image..."
-          docker push cklany/wkld6_backend:latest
+        echo "Building the backend image..."
+        docker build -t cklany/wkld6_backend:latest -f Dockerfile.backend .
+        echo "Pushing backend image..."
+        docker push cklany/wkld6_backend:latest
         '''
         
         // Build and push frontend
         sh '''
-          echo "Building the frontend image..."
-          docker build -t cklany/wkld6_frontend:latest -f Dockerfile.frontend .
-          echo "Pushing frontend image..."          
-          docker push cklany/wkld6_frontend:latest
+        echo "Building the frontend image..."
+        docker build -t cklany/wkld6_frontend:latest -f Dockerfile.frontend .
+        echo "Pushing frontend image..."          
+        docker push cklany/wkld6_frontend:latest
         '''
       }
     }
