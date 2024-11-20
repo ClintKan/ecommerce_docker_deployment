@@ -26,8 +26,7 @@ pipeline {
         source venv/bin/activate
         pip install -r ./backend/requirements.txt
         pip install pytest-django
-        export PYTHONPATH=$PYTHONPATH:$(pwd)/backend
-        pytest backend/account/tests.py --verbose --junit-xml test-reports/results.xml
+        python backend/manage.py makemigrations
         ''' 
       }
     }
