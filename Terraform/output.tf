@@ -4,7 +4,7 @@ output "instance_ip_1" {
 }
 
 # Displaying the public IP address of the Bastion EC2 in AZ-1b instance after creation.
-output "instance_ip_1b" {
+output "instance_ip_2" {
   value = aws_instance.ecommerce_app_az2.id
 
 }
@@ -16,11 +16,15 @@ output "nat_gateway_ip" {
 }
 
 # Output the public IP address of the NAT Gateway's Elastic IP in AZ 1b
-output "nat_gateway_ip_1b" {
+output "nat_gateway_ip_1" {
   value = aws_nat_gateway.wl6vpc_ngw_2b.id
 
 }
 
-output "rds_endpoint" {
+output "rds_endpoint-1" {
   value = aws_db_instance.main.endpoint
+}
+
+output "rds_endpoint-2" {
+  value = aws_db_instance.main.address
 }

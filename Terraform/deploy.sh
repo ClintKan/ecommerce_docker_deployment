@@ -66,6 +66,8 @@ echo \
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo usermod -aG docker $USER
+sudo usermod -aG docker jenkins
+sudo usermod -aG docker ubuntu
 newgrp docker
 
 # Installing Docker Compose
@@ -89,8 +91,6 @@ echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USERNAME" --password-std
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating app directory..."
 mkdir -p /app
 cd /app
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Created and moved to /app"
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating docker-compose.yml..."
 
 # Creating the docker-compose.yml file
 cat > docker-compose.yml <<EOF
@@ -99,11 +99,12 @@ EOF
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] docker-compose.yml started."
 
-sudo docker-compose pull
-sudo docker-compose up -d --force-recreate
+sudo docker compose pull
+sudo docker compose up -d --force-recreate
 sudo docker system prune -f
 sudo docker logout
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Logging out of DockerHub..."
 
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Deployment process complete."
 
+#ecommerce-db.c30smeomyuio.us-east-2.rds.amazonaws.com:5432

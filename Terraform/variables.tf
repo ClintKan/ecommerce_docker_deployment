@@ -21,21 +21,21 @@ variable "db_instance_class" {
 variable "db_name" {
   description = "The name of the database to create when the DB instance is created"
   type        = string
-  default     = "ecommercedb"
+  default     = "ecommerce"
 }
 
 variable "db_username" {
   description = "Username for the master DB user"
   type        = string
   sensitive   = true
-  default     = ""
+  default     = "userdb"
 }
 
 variable "db_password" {
   description = "Password for the master DB user"
   type        = string
   sensitive   = true
-  default     = ""
+  default     = "abcd1234"
 }
 
 variable "dockerhub_username" {

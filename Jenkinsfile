@@ -3,6 +3,7 @@ pipeline {
 
   environment {
     DOCKER_CREDS = credentials('docker-hub-credentials')
+    DJANGO_SETTINGS_MODULE = 'backend.myproject.settings'
   }
 
   stages {
@@ -10,11 +11,10 @@ pipeline {
       agent any
       steps {
         sh '''#!/bin/bash
-        sudo apt update
-        sudo apt upgrade -y
-        sudo add-apt-repository ppa:deadsnakes/ppa -y
-        sudo apt install python3.9 python3-pip python3.9-venv -y python3.9-dev -y
-        python3.9 -m venv venv
+          python3.9 -m venv venv
+          source venv/bin/activate
+          pip install pip --upgrade
+          pip install -r backend/requirements.txt
         '''
       }
     }
@@ -204,7 +204,7 @@ pipeline {
 
   post {
     always {
-      agent { label 'build-node' }
+      node('build-node') }
       steps {
         sh '''
           docker logout

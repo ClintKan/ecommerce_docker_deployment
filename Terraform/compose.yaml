@@ -1,8 +1,9 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   backend:
     image: cklany/wkld6_backend:latest
+    container_name: ecommerce-backend
     environment:
       - DB_HOST=${rds_endpoint}
     ports:
@@ -16,6 +17,7 @@ services:
 
   frontend:
     image: cklany/wkld6_frontend:latest
+    container_name: ecommerce-frontend
     ports:
       - "3000:3000"
     depends_on:
