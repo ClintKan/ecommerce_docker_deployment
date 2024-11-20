@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     // DOCKER_CREDS = credentials('docker-hub-credentials')
-    DJANGO_SETTINGS_MODULE = 'backend.myproject.settings'
+    // DJANGO_SETTINGS_MODULE = 'backend.myproject.settings'
   }
 
   stages {
