@@ -94,8 +94,7 @@ pipeline {
 
   post {
     always {
-      agent { label 'build-node' } {
-        always {
+      node('build-node') {
           sh '''
             docker logout
             docker system prune -f
@@ -106,4 +105,4 @@ pipeline {
   }
 }
 }
-}
+
