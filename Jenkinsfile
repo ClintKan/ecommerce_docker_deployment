@@ -78,14 +78,12 @@ pipeline {
       }
     }
 
-    // Finalize Stage (Replaces post block)
-    stage('Finalize') {
-      agent { label 'build-node' }
-      steps {
-        sh '''
-          echo "Performing final cleanup tasks..."
-          docker logout
-          docker system prune -f
+  post {
+    always {
+      node('build-node') {
+          sh '''
+            docker logout
+            docker system prune -f
         '''
       }
     }
