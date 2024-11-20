@@ -21,9 +21,7 @@ pipeline {
     stage('Test') {
       agent any
       steps {
-        sh '''
-        #!/bin/bash
-        python3.9 -m venv venv
+        sh '''#!/bin/bash
         source venv/bin/activate
         pip install pytest-django
         python backend/manage.py makemigrations
