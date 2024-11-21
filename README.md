@@ -1,182 +1,115 @@
-# Kura Labs Cohort 5- Deployment Workload 6
-
-
----
-
-
-## Containerization
-
-Welcome to Deployment Workload 6! In Workload 5 we used Terraform to spin up our whole production environment as well as deploy our application.. right?  Well it did for some people and even then it was complicated.  Let's see how Docker can make our lives a little easier.  
-
-Be sure to document each step in the process and explain WHY each step is important to the pipeline.
-
-## Instructions
-
-1. Clone this repo to your GitHub account and call it "ecommerce_docker_deployment".
-
-2. Create a t3.micro EC2 called "Jenkins". This will be your Jenkins Manager instance. Install Jenkins and Java 17 onto it.
-
-3. Create a t3.medium EC2 called "Docker_Terraform". This will be your Jenkins NODE instance. Install Java 17, Terraform, Docker, and AWS CLI onti it.  For this workload it would be easiest to use the same .pem key for both of these instances to avoid confusion when trying to connect them.
-
-   NOTE: Make sure you configure AWS CLI and that Terraform can create infrastructure using your credentials (Optional: Consider adding a verification in your pipeline stage to check for this to avoid errors).
-
-5. The next few steps will guide you on how to set up a Jenkins Node Agent.
-
-  a. Make sure both instances are running and then log into the Jenkins console in the Jenkins Manager instance.  On the left side of the home page under the navigation panel and "Build Queue", Click on "Build Executor Status"
-
-  b. Click on "New Node"
-
-  c. Name the node "build-node" and select "Permanent Agent"
-
-  d. On the next screen,
-  
-      i. "Name" should read "build-node"
-
-      ii. "Remote root directory" == "/home/ubuntu/agent"
-
-      iii. "Labels" == "build-node"
-
-      iv. "Usage" == "Only build jobs with label expressions matching this node"
-
-      v. "Launch method" == "Launch agents via SSH"
-
-      vi. "Host" is the public IP address of the Node Server
-
-      vii. Click on "+ ADD" under "Credentials" and select "Jenkins".
-
-      viii. Under "Kind", select "SSH Username with private key"
-
-      ix. "ID" == "build-node"
-
-      x. "Username" == "ubuntu"
-
-      xi. "Private Key" == "Enter directly" (paste the entire private key of the Jenkins node instance here. This must be the .pem file)
-
-      xi. Click "Add" and then select the credentials you just created.  
-
-      xii. "Host Key Verification Strategy" == "Non verifying Verification Strategy"
-
-      xiii. Click on "Save"
-
-   e. Back on the Dashboard, you should see "build-node" under "Build Executor Status".  Click on it and then view the logs.  If this was successful it will say that the node is "connected and online".
-    
-5. Create terraform files that will create the following infrastructure:
-
-```
-- 1x Custom VPC in us-east-1
-- 2x Availability zones in us-east-1a and us-east-1b
-- A private and public subnet in EACH AZ
-- An EC2 in each subnet (EC2s in the public subnets are for the bastion host, the EC2s in the private subnets are for the front AND backend containers of the application) Name the EC2's: "ecommerce_bastion_az1", "ecommerce_app_az1", "ecommerce_bastion_az2", "ecommerce_app_az2"
-- A load balancer that will direct the inbound traffic to either of the public subnets.
-- An RDS databse
-```
-NOTE 1: This list DOES NOT include ALL of the resource blocks required for this infrastructure.  It is up to you to figure out what other resources need to be included to make this work.
-
-NOTE 2: Put your terraform files into your GitHub repo in the "Terraform" directory.
-
-Use the following "user_data" code for your EC2 resource block:
-```
-user_data = base64encode(templatefile("${path.module}/deploy.sh", {
-    rds_endpoint = aws_db_instance.main.endpoint,
-    docker_user = var.dockerhub_username,
-    docker_pass = var.dockerhub_password,
-    docker_compose = templatefile("${path.module}/compose.yaml", {
-      rds_endpoint = aws_db_instance.main.endpoint
-    })
-  }))
-```
-Also make sure that you also include the following for the EC2 resource block:
-```
-  depends_on = [
-    aws_db_instance.main,
-    aws_nat_gateway.main
-  ]
-```
-NOTE: Notice what is required for this user data block.  (var.dockerhub_username, var.dockerhub_password, deploy.sh, compose.yaml, and aws_db_instance.main.endpoint) Make sure that you declare the required variables and place the deploy.sh (must create) and compose.yaml (provided) in the same directory as your main.tf (Terraform directory in GitHub).
-
-6. Create a deploy.sh file that will run in "user_data".
-  
-  a. This script must (in this order):
-  
-  i. install docker and docker-compose;
-
-  ii. log into DockerHub;
-
-  iii. create the docker-compose.yaml with the following code:
-
-      ```
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating app directory..."
-    mkdir -p /app
-    cd /app
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Created and moved to /app"
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] Creating docker-compose.yml..."
-    cat > docker-compose.yml <<EOF
-    ${docker_compose}
-    EOF
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] docker-compose.yml created"
-    
-    ```
-   Note: How is this code creating the docker_compose.yaml file? (Hint: Look at "user_data" and the "Jenkinsfile")
-
-   iv. run `docker-compose pull`
-
-   v. run `docker-compose up -d --force-recreate`
-
-   vi. Clean the server by running a docker system prune and logging out of dockerhub.  
-
-   Be sure to try to understand each of these commands as they are vital to the success of this workload.  
-
-   NOTE: You are not limited to running only these commands in this script.  If you want to include anything else to set up the server you are more than welcome to.
-
-7. Create Dockerfiles for the backend and frontend images
-
-  a. Name the Dockerfile for the backend "Dockerfile.backend"
-
-   i. Pull the python:3.9 base image
-
-   ii. Copy the "backend" directory into the image
-
-   iii. install `django-environ` and all other dependencies
-
-   iv. Run `python manage.py makemigrations account`, `python manage.py makemigrations payments`, `python manage.py makemigrations product`
-
-   v. Expose port 8000
-
-   vi. Set the command `python manage.py runserver 0.0.0.0:8000` to run when the container is started
-
-  b. Name the Dockerfile for the frontend "Dockerfile.frontend"
-
-   i. Pull the node:14 base image
-
-   ii. Copy the "frontend" directory into the image
-
-   iii. Run `npm install`
-
-   iv. Expose port 3000
-
-   v. Set the command `npm start` to run when the container is started
-
-  c. Save these files to the root directory of your GitHub Repository
-
-8. Modify the Jenkinsfile as needed to accomodate your files.
-
-9. Modify the compose.yml file as needed to accomodate your files (image tags).
-
-10. Create a Multi-Branch pipeline called "workload_6" and run the pipeline to deploy the application!
-
-11. Create a monitoring EC2 in the default VPC that will monitor the resources of the various servers.  (Hopefully you read through these instructions in it's entirety before you ran the pipeline so that you could configure the correct ports for node exporter.)
-
-12. Document! All projects have documentation so that others can read and understand what was done and how it was done. Create a README.md file in your repository that describes:
-
-	  a. The "PURPOSE" of the Workload,
-
-  	b. The "STEPS" taken (and why each was necessary/important),
-    
-  	c. A "SYSTEM DESIGN DIAGRAM" that is created in draw.io (IMPORTANT: Save the diagram as "Diagram.jpg" and upload it to the root directory of the GitHub repo.),
-
-	  d. "ISSUES/TROUBLESHOOTING" that may have occured,
-
-  	e. An "OPTIMIZATION" section for how you think this workload/infrastructure/CICD pipeline, etc. can be optimized further.  
-
-    f. A "CONCLUSION" statement as well as any other sections you feel like you want to include.
-
+# Ecommerce Docker Deployment
+
+## Purpose
+Building upon the previous workload, this continuation focuses on enhancing the deployment process for the ecommerce application by containerizing it. The goal is to deploy the containerized application to a secure, highly available, and fault-tolerant AWS Cloud Infrastructure. By leveraging Infrastructure as Code (IaC) and a robust CI/CD pipeline, this workload ensures seamless infrastructure management, enabling rapid deployment and modification of the application whenever updates are made to its source code. This approach further streamlines operations, reduces downtime, and supports scalability for future growth.
+
+
+<div align="center">
+	<img width="499" alt="image" src="https://github.com/user-attachments/assets/20c1d38e-28db-4da9-8bde-9dad74afe61c">
+</div>
+
+
+<div align="center">
+	<img width="618" alt="image" src="https://github.com/user-attachments/assets/f3abb929-30a0-49e3-b113-3febf42ad662">
+</div>
+
+
+## Steps Taken
+
+1. **Manual Deployment for Understanding**:
+   - Initially deployed the application manually on two EC2 instances (frontend and backend) to understand the setup process. This step was crucial as it provided insights into the necessary configurations and potential challenges before automating them.
+
+2. **Infrastructure Creation using Terraform (IaC)**:
+   - Created multiple '.tf' files that defined all necessary resources for the application:
+     - **VPC and Subnets**: Created a custom VPC (`wl5vpc`) and configured public and private subnets across two availability zones.
+     - **EC2 Instances**: Deployed two EC2 instances for the frontend and two for the backend, ensuring proper security, redundancy/availability.
+     - **Load Balancer**: Configured a load balancer to route traffic effectively between the frontend EC2s.
+     - **RDS Database**: Added an RDS instance to store application data, enhancing data management and availability.
+
+   - **Terraform Files Created**:
+     - `ec2s.tf`: *This had all four EC2s creation code*
+     - `main.tf`: *This had the custom VPC, VPC Peering between the two VPCs default and custom, load balancer. Then it also had Elastic IPs, (in both
+       availability zones).*
+     - `network.tf`: *This had the internet gateway, the two NAT gateways attached in the public subnets of both availability zones. Then, the
+	public & private route tables (and their associations), the security groups; public, private and the RDS'*
+     - `outputs.tf`: *This was to written to output the IP addresses of both frontend EC2s*
+     - `providers.tf`: *This had the aws variable identifiers (for the key to be used for authenticating. The epecific details of these credentials 
+	were passed in Jenkins though. More on that later.*
+     - `rds.tf`: *This was the file showing housing how the RDS was to be created - with which infrastructure specifics.*
+     - `security.tf`: *This was the file with the security groups controlling the ingress and egress traffic for all 4 EC2s and the RDS instance.*
+     - `variables.auto.tf`: *This declared the region in which the infrastructure was to be placed in and the type of EC2s.*
+     - `variables.tf`: *.This declared the variables that surface anywhere within the above .tf files, plus the credentials passed from Jenkins.*
+
+3. **Jenkins CI/CD Pipeline**:
+   - Expanded the Jenkins pipeline to incorporate Docker containerization and Terraform-based infrastructure deployment. The stages include:  
+     - **Build**:
+       - Set up a Python virtual environment.  
+       - Upgraded `pip` and installed all required dependencies from the backend's `requirements.txt` file.  
+     - **Test**:
+       - Leveraged `pytest-django` to run Django-specific tests, ensuring code quality and functionality.  
+       - Saved test results as XML reports for further analysis.  
+     - **Cleanup**:
+       - Incorporated an in-pipeline cleanup step to remove unused Docker objects, ensuring efficient resource utilization on the build node.  
+     - **Build & Push Images**:
+       - **Backend and Frontend**: Built Docker images for both backend and frontend components using their respective Dockerfiles.  
+       - **Docker Hub**: Logged into Docker Hub using secure credentials and pushed the built images to the repository for deployment.  
+     - **Infrastructure**:
+       - Used Terraform within the pipeline to provision infrastructure in AWS.  
+       - Passed Docker Hub credentials as variables for secure deployment of containerized applications.  
+     - **Post**:
+       - Logged out of Docker Hub and performed final cleanup to free up resources, ensuring the pipeline is ready for future runs.  
+
+4. **Deployment Automation with deploy.sh Script**:
+   - The deployment process was further automated using a robust `deploy.sh` script, streamlining the setup and configuration of essential services. This script begins by updating the system and installing
+     prerequisites, followed by setting up Prometheus Node Exporter for system metrics monitoring. Docker and Docker Compose are installed and configured, enabling containerized application deployment. The
+     script dynamically generates a `docker-compose.yml` file to orchestrate the deployment of services and ensures secure interactions with Docker Hub for image pulls. After pulling and recreating the
+     application containers, unnecessary system resources are pruned to maintain efficiency. The entire process is logged with timestamps, ensuring traceability and reliability during deployments.
+
+5. **Environment Variable Management**:
+   - Used Jenkins Secret Manager to handle sensitive information, such as AWS credentials, ensuring security and compliance.
+
+6. **Monitoring Setup**:
+   - Deployed an additional EC2 instance in the default VPC for monitoring purposes to track the health and performance of the deployed resources in the custom VPC named _**wl6vpc**_.
+
+7. **Documentation**:
+   - Created a comprehensive README file documenting the process, challenges faced, and potential optimizations for future iterations.
+
+
+## Issues/Troubleshooting
+- **Availability Zone Misconfiguration**: Initially deployed the infrastructure in the wrong availability zone, which required tearing down and redeploying both the development and production environments. This delay highlighted the importance of verifying region and availability zone settings during setup. The issue was resolved by thoroughly reviewing the Terraform configuration and ensuring alignment with the required deployment specifications.  
+
+- **Resource Limitations on Build Node**: The build node experienced frequent resource exhaustion, causing builds to fail mid-pipeline. This necessitated multiple restarts and underscored the need for more robust hardware or optimized resource usage. To address this, I allocated additional resources to the build node and fine-tuned the Jenkins pipeline to ensure smoother operation.  
+
+
+<div align="center">
+	<img width="1368" alt="Pasted Graphic 106" src="https://github.com/user-attachments/assets/d6b97fb5-2632-4c42-a3bb-9b0f505d083f">
+</div>
+
+
+- **Missing Files and Application Misconfigurations**: Several critical files, including product images and configuration scripts, were missing from the repository. This required collaboration with more experienced full-stack engineers to locate or recreate the necessary files, ensuring the application could be built and deployed properly. The issue was resolved by consolidating the application files and creating a checklist to verify all required assets were present before deployment.  
+
+- **RDS Database Connectivity Issues**: Despite having the rest of the infrastructure correctly configured and operational, connecting to the RDS database posed a significant challenge. Resolving this required extensive troubleshooting of database credentials, network configurations, and application settings. The solution involved refining the security group rules, ensuring correct environment variable mappings, and testing connectivity with a local development database before applying the final changes to the production environment.
+
+
+## Optimization
+- Future improvements could include:
+  - Considering the use of containerization (e.g., Docker) for the application deployment to simplify the management of app and
+    environment dependency management.
+  - Automating the database migrations further within the CI/CD pipeline for smoother updates and changes.
+  - Creating two RDS Databases instead of one. This would bring about redundancy on all tiers not just the first two layers.
+  - Setting up HTTPS - using SSL/TSL certs — for a more secure connection
+  - Use Route53 to set up a custom DNS name - i.e. ecommerce.com
+  - Using Modules to make the terraform code re-usable.
+  - Creating of an S3 bucket to better manage/handle the terraform state file. Having a centralized
+  - Automating the updating of different components of the application code to reflect the backend IP address of the backend EC2s.
+
+
+## Business Intelligence
+- In this section, it was to load the RDS database (from the frontend) with sqlite data tables. Unfortunately, while I was unable get to this part - due to the project timeline, the database was aimed to map out relationship between the tables basing on the common data field within the tables.
+- Additionally, below are the questions that were meant to answered using SQL & Pandas;
+  - How many rows of data are there in these tables? What is the SQL query you would use to find out how many users, products, and orders there are?
+  - Which states ordered the most products? Least products? Provide the top 5 and bottom 5 states.
+  - Of all of the orders placed, which product was the most sold? Please prodide the top 3.
+
+## Conclusion
+This workload showcases the power of Terraform and Jenkins in automating the deployment process, to provide a robust, scalable and yet more resiient infrastructure for an application. This can be an efficient and more consistent, yet streamlined way of setting up cloud infrastructure in any environment, paving the way for more efficient development practices.
