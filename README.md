@@ -104,12 +104,5 @@ Building upon the previous workload, this continuation focuses on enhancing the 
   - Automating the updating of different components of the application code to reflect the backend IP address of the backend EC2s.
 
 
-## Business Intelligence
-- In this section, it was to load the RDS database (from the frontend) with sqlite data tables. Unfortunately, while I was unable get to this part - due to the project timeline, the database was aimed to map out relationship between the tables basing on the common data field within the tables.
-- Additionally, below are the questions that were meant to answered using SQL & Pandas;
-  - How many rows of data are there in these tables? What is the SQL query you would use to find out how many users, products, and orders there are?
-  - Which states ordered the most products? Least products? Provide the top 5 and bottom 5 states.
-  - Of all of the orders placed, which product was the most sold? Please prodide the top 3.
-
 ## Conclusion
 This workload showcases the power of Terraform and Jenkins in automating the deployment process, to provide a robust, scalable and yet more resiient infrastructure for an application. This can be an efficient and more consistent, yet streamlined way of setting up cloud infrastructure in any environment, paving the way for more efficient development practices.
