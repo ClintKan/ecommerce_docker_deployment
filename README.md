@@ -19,7 +19,7 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 ## Steps Taken
 
 1. **Manual Deployment for Understanding**:
-   - Initially deployed the application manually on two EC2 instances (frontend and backend) to understand the setup process. This step was crucial as it provided insights into the necessary configurations and potential challenges before automating them.
+   - Initially deployed the application manually on three EC2 instances in the development environment (Jenkins - the build master, Docker-Terraform - the build-node and the monitoring workstation) to understand the setup process. This step was crucial as it provided insights into the necessary configurations and potential challenges before automating them.
 
 2. **Infrastructure Creation using Terraform (IaC)**:
    - Created multiple '.tf' files that defined all necessary resources for the application:
@@ -95,15 +95,14 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 
 ## Optimization
 - Future improvements could include:
-  - Considering the use of containerization (e.g., Docker) for the application deployment to simplify the management of app and
-    environment dependency management.
-  - Automating the database migrations further within the CI/CD pipeline for smoother updates and changes.
-  - Creating two RDS Databases instead of one. This would bring about redundancy on all tiers not just the first two layers.
-  - Setting up HTTPS - using SSL/TSL certs — for a more secure connection
-  - Use Route53 to set up a custom DNS name - i.e. ecommerce.com
-  - Using Modules to make the terraform code re-usable.
-  - Creating of an S3 bucket to better manage/handle the terraform state file. Having a centralized
-  - Automating the updating of different components of the application code to reflect the backend IP address of the backend EC2s.
+  - **Auto-Scaling Groups for EC2 Instances**: Implementing auto-scaling groups to adjust EC2 resources based on traffic demand, improving cost efficiency and ensuring high availability by dynamically scaling the infrastructure.
+  
+  - **IAM Roles with Least Privilege**: Enhancing security by using IAM roles with the principle of least privilege to restrict access to resources, minimizing the risk of unauthorized access.
+  
+  - **Switching to AWS Cloud Monitoring**: Replacing Prometheus and Grafana with AWS-native tools like CloudWatch and X-Ray for seamless integration, quicker setup, and reduced operational overhead in monitoring infrastructure and application performance.
+  
+  - **Automating Infrastructure with Terraform Modules**: Using Terraform modules and workspaces to improve reusability, modularity, and management of infrastructure across different environments, ensuring consistent and scalable deployments.
+
 
 
 ## Conclusion
