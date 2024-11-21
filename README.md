@@ -16,6 +16,8 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 </div>
 
 
+
+
 ## Steps Taken
 
 1. **Manual Deployment for Understanding**:
@@ -106,4 +108,4 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 
 
 ## Conclusion
-This workload showcases the power of Terraform and Jenkins in automating the deployment process, to provide a robust, scalable and yet more resiient infrastructure for an application. This can be an efficient and more consistent, yet streamlined way of setting up cloud infrastructure in any environment, paving the way for more efficient development practices.
+This workload demonstrates the integration of Docker, Terraform, and Jenkins to streamline the deployment and management of an ecommerce application in the cloud. By leveraging Infrastructure as Code (IaC), containerization, and CI/CD pipelines, we have established a scalable, reliable, and efficient infrastructure. This setup not only improves the automation of deployments but also enhances the flexibility and consistency of updates, enabling faster and more secure application delivery. Through the use of cloud-native tools, containerized environments, and modular infrastructure, this approach provides a solid foundation for modern development practices and ensures greater resilience in any production environment.
