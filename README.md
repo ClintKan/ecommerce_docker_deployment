@@ -21,7 +21,7 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 ## Steps Taken
 
 1. **Manual Deployment for Understanding**:
-   - Initially deployed the application manually on three EC2 instances in the development environment (Jenkins - the build master, Docker-Terraform - the build-node and the monitoring workstation) to understand the setup process. This step was crucial as it provided insights into the necessary configurations and potential challenges before automating them.
+   - Initially deployed the application manually on two EC2 instances in the development environment (Jenkins - the build master and the Docker-Terraform - the build-node) to understand the setup process. This step was crucial as it provided insights into the necessary configurations and potential challenges before automating them.
 
 2. **Infrastructure Creation using Terraform (IaC)**:
    - Created multiple '.tf' files that defined all necessary resources for the application:
@@ -74,6 +74,12 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 
 6. **Monitoring Setup**:
    - Deployed an additional EC2 instance in the default VPC for monitoring purposes to track the health and performance of the deployed resources in the custom VPC named _**wl6vpc**_.
+
+
+<div align="center">
+	<img width="822" alt="image" src="https://github.com/user-attachments/assets/ea337f58-59a1-47c2-87bd-75966d395967">
+</div>
+
 
 7. **Documentation**:
    - Created a comprehensive README file documenting the process, challenges faced, and potential optimizations for future iterations.
