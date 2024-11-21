@@ -73,7 +73,7 @@ pipeline {
         dir('Terraform') {
           sh '''
             terraform init
-            terraform apply -no-color \
+            terraform apply -auto-approve -no-color \
               -var="db_username=${db_username}" \
               -var="db_password=${db_password}" \
               -var="aws_access_key=${aws_access_key}" \
