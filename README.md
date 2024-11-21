@@ -25,7 +25,7 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 
 2. **Infrastructure Creation using Terraform (IaC)**:
    - Created multiple '.tf' files that defined all necessary resources for the application:
-     - **VPC and Subnets**: Created a custom VPC (`wl5vpc`) and configured public and private subnets across two availability zones.
+     - **VPC and Subnets**: Created a custom VPC (`wl6vpc`) and configured public and private subnets across two availability zones.
      - **EC2 Instances**: Deployed two EC2 instances for the frontend and two for the backend, ensuring proper security, redundancy/availability.
      - **Load Balancer**: Configured a load balancer to route traffic effectively between the frontend EC2s.
      - **RDS Database**: Added an RDS instance to store application data, enhancing data management and availability.
