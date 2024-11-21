@@ -77,7 +77,7 @@ pipeline {
               -var="db_username=${db_username}" \
               -var="db_password=${db_password}" \
               -var="aws_access_key=${aws_access_key}" \
-              -var="aws_secret_key=${aws_secret_key} \
+              -var="aws_secret_key=${aws_secret_key}" \
               -var="dockerhub_username=${DOCKER_CREDS_USR}" \
               -var="dockerhub_password=${DOCKER_CREDS_PSW}"
           '''
