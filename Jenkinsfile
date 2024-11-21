@@ -68,8 +68,8 @@ pipeline {
       steps {
           withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'aws_access_key'), 
                         string(credentialsId: 'AWS_SECRET_KEY', variable: 'aws_secret_key'),
-                        string(credentialsId: 'DB_Username', variable: 'db_username'),
-                        string(credentialsId: 'DB_Password', variable: 'db_password')]) {
+                        string(credentialsId: 'DB_USERNAME', variable: 'db_username'),
+                        string(credentialsId: 'DB_PASSWORD', variable: 'db_password')]) {
         dir('Terraform') {
           sh '''
             terraform init
