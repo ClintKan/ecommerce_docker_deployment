@@ -9,8 +9,10 @@ Building upon the previous workload, this continuation focuses on enhancing the 
 </div>
 
 
+
+
 <div align="center">
-	<img width="618" alt="image" src="https://github.com/user-attachments/assets/f3abb929-30a0-49e3-b113-3febf42ad662">
+	<img width="1137" alt="image" src="https://github.com/user-attachments/assets/481b8749-ec11-409f-9470-a25bf7820eb1">
 </div>
 
 
