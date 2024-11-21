@@ -53,7 +53,7 @@ echo "[$(date '+%Y-%m-%d %H:%M:%S')] Installing Docker..."
 
 # Installing Docker
 sudo apt-get install ca-certificates curl -y
-sudo install -m 0755 -d /etc/apt/keyrings
+sudo install -m 0755 -d /etc/apt/keyrings -y
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 sudo chmod a+r /etc/apt/keyrings/docker.asc
 
@@ -72,7 +72,7 @@ newgrp docker
 # Installing Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
-sudo apt  install docker-compose
+sudo apt  install docker-compose -y
 docker-compose --version
 
 # # Start Docker service
