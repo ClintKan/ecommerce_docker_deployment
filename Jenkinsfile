@@ -66,6 +66,10 @@ pipeline {
     stage('Infrastructure') {
       agent { label 'build-node' }
       steps {
+          withCredentials([string(credentialsId: 'AWS_ACCESS_KEY', variable: 'aws_access_key'), 
+                        string(credentialsId: 'AWS_SECRET_KEY', variable: 'aws_secret_key'),
+                        string(credentialsId: 'DB_Username', variable: 'db_username'),
+                        string(credentialsId: 'DB_Password', variable: 'db_password')]) {
         dir('Terraform') {
           sh '''
             terraform init
@@ -77,6 +81,7 @@ pipeline {
               -var="dockerhub_username=${DOCKER_CREDS_USR}" \
               -var="dockerhub_password=${DOCKER_CREDS_PSW}"
           '''
+          }
         }
       }
     }
